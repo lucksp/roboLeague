@@ -1,20 +1,24 @@
-# react_webpack_boilerplate
+# Robo Sports League Generator
 
-React boilerplate with Webpack, Express, Hot Module Replacement loading
+As a league owner, you need to create a tool that allows others to generate teams that can compete
+in your league. The purpose of your interface is to allow users to generate, view, and edit their
+own rosters in a way that ensures all rosters generated using your tool meet the following
+league requirements:
+
+- A roster (a group of players) must be filled with 10 starters and 5 substitutes.
+- Each player bot must have a first name and last name, and the following attributes:
+  - Speed
+  - Strength
+  - Each player bot must have a unique first name and last name.
+  - Each player bot must have a 6-digit alphanumeric identiier, e.g. &quot;ABC1234&quot;.
+  - No two player bots can have the same name.
+  - No two player bots can have the same total attribute score.
+
+The total sum of the speed, strength, and agility attributes is calculated as the &quot;total attribute
+score&quot; for each player bot. The total attribute score of each of your player bots can not exceed
+100 points, and no two players can have the same score.
 
 ## Setup
-
-Create a new repo for your next project. Inside <new repository>,
-`git remote add boilerplate git@github.com:you/project`
-`git fetch`
-`git pull boilerplate master --allow-unrelated-histories`
-push to your project Master branch & Pull again before starting project. Then...
-
-`yarn install`
-
-## Run Dev
-
-`yarn dev`
 
 `yarn install`
 
@@ -25,7 +29,3 @@ push to your project Master branch & Pull again before starting project. Then...
 ## Run Prod
 
 `yarn build`
-
-#### Credits to:
-
-[medium.freecodecamp React Boilerplate](https://medium.freecodecamp.org/how-to-build-your-own-react-boilerplate-2f8cbbeb9b3f) and [medium.freecodecamp Webpack for React](https://medium.freecodecamp.org/learn-webpack-for-react-a36d4cac5060) for getting this started.
