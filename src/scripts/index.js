@@ -3,15 +3,19 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./components/App";
 import { BrowserRouter } from "react-router-dom";
+import store from "./redux/createStore";
+import { Provider } from "react-redux";
 
 import "../styles/style.scss";
 
 const render = Component =>
   ReactDOM.render(
     <BrowserRouter>
-      <AppContainer>
-        <App />
-      </AppContainer>
+      <Provider store={store}>
+        <AppContainer>
+          <App />
+        </AppContainer>
+      </Provider>
     </BrowserRouter>,
     document.getElementById("root")
   );
