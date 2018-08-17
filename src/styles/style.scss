@@ -1,3 +1,20 @@
 * {
   min-width: 0;
 }
+
+.area-input {
+  margin: 24px auto;
+  padding: 16px 32px;
+}
+
+.input-row {
+  margin-bottom: 8px;
+}
+
+.input-row label {
+  text-transform: capitalize;
+}
+
+.list-names {
+  display: flex;
+}
