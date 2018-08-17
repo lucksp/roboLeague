@@ -5,12 +5,16 @@ import { getListOfNames, saveName } from "../redux/actions/general";
 
 class Roster extends Component {
   state = {
-    name_first: "",
-    name_last: "",
-    selected: false,
-    speed: null,
-    strength: null,
-    agility: null
+    name: {
+      name_first: "",
+      name_last: "",
+      selected: false,
+      speed: null,
+      strength: null,
+      agility: null,
+      type: null
+    },
+    hasInvalid: false
   };
 
   listOfNames() {
@@ -19,8 +23,14 @@ class Roster extends Component {
     });
   }
 
+  validateNumber(value) {
+    if (value < 0 || value > 100) return false;
+    return true;
+  }
+
   handleChange = e => {
-    let newState = {};
+    let newState = { ...this.state.name };
+    let hasInvalid = false;
     switch (e.target.id) {
       case "name_first":
         newState.name_first = e.target.value;
@@ -28,22 +38,31 @@ class Roster extends Component {
       case "name_last":
         newState.name_last = e.target.value;
         break;
-      case "speed":
-        newState.speed = parseInt(e.target.value);
-        break;
-      case "strength":
-        newState.strength = parseInt(e.target.value);
-        break;
       case "agility":
-        newState.agility = parseInt(e.target.value);
+      case "speed":
+      case "strength":
+        if (this.validateNumber(e.target.value)) {
+          newState[e.target.id] = parseInt(e.target.value);
+          if (e.target.classList.contains("invalid")) {
+            e.target.classList.remove("invalid");
+          }
+        } else {
+          hasInvalid = true;
+          this.invalidInput = e.target;
+          this.invalidInput.classList.add("invalid");
+        }
         break;
       default:
         break;
     }
-    this.setState(...this.state, newState);
+    if (e.target.type === "checkbox") {
+      newState.type = e.target.value;
+    }
+    this.setState({ ...this.state, name: newState, hasInvalid });
   };
 
   handleSave = () => {
+    if (this.state.hasInvalid) return false;
     this.props.saveName(this.state);
   };
 
@@ -85,7 +104,7 @@ class Roster extends Component {
     return (
       <div className={"wrapper-roster"}>
         <div className="area-input container">
-          <div className="form-group">
+          <div className="form-group needs-validation" noValidate>
             {inputList.map((item, i) => {
               return (
                 <div className={"input-row " + item.id} key={i}>
@@ -106,20 +125,19 @@ class Roster extends Component {
                     />
                   )}
                   {item.type === "checkbox" && (
-                    <div>
+                    <div className="input-checkbox">
                       {item.options.map((check, i) => {
                         return (
                           <div className="form-check form-check-inline" key={i}>
                             <input
                               className="form-check-input"
                               type="checkbox"
-                              id="inlineCheckbox1"
-                              value="option1"
+                              id={check}
+                              value={check}
+                              onChange={this.handleChange}
+                              checked={this.state.type === check}
                             />
-                            <label
-                              className="form-check-label"
-                              htmlFor="inlineCheckbox1"
-                            >
+                            <label className="form-check-label" htmlFor={check}>
                               {item.options[i]}
                             </label>
                           </div>
@@ -133,7 +151,9 @@ class Roster extends Component {
           </div>
           <input
             type="button"
-            className="btn btn-primary"
+            className={
+              "btn btn-primary" + (this.state.hasInvalid ? " disabled" : "")
+            }
             onClick={this.handleSave}
             value="Submit"
           />

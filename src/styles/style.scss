@@ -18,3 +18,7 @@
 .list-names {
   display: flex;
 }
+
+input.invalid {
+  border-color: red;
+}
