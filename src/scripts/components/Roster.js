@@ -1,53 +1,75 @@
 import React, { Component } from "react";
 import ListOfNames from "./ListOfNames";
 import { connect } from "react-redux";
-import { getListOfNames, saveName } from "../redux/actions/general";
+import {
+  getListOfNames,
+  saveName,
+  over100,
+  clearError
+} from "../redux/actions/general";
 
 class Roster extends Component {
   state = {
     name: {
-      name_first: "",
-      name_last: "",
-      selected: false,
+      name_first: null,
+      name_last: null,
       speed: null,
       strength: null,
       agility: null,
       type: null
     },
-    hasInvalid: false
+    hasInvalidInput: true,
+    verifiedAllInputs: false
   };
 
-  listOfNames() {
-    return this.props.listOfNames.map((name, i) => {
-      return <li key={i}>{name}</li>;
-    });
-  }
-
-  validateNumber(value) {
+  validateNumber(value, id) {
     if (value < 0 || value > 100) return false;
+
+    switch (id) {
+      case "agility":
+        if (this.state.name.speed + this.state.name.strength + value > 100)
+          return false;
+        break;
+      case "speed":
+        if (this.state.name.agility + this.state.name.strength + value > 100)
+          return false;
+        break;
+      case "strength":
+        if (this.state.name.agility + this.state.name.speed + value > 100)
+          return false;
+        break;
+    }
     return true;
   }
 
   handleChange = e => {
+    let hasInvalidInput = true;
     let newState = { ...this.state.name };
-    let hasInvalid = false;
     switch (e.target.id) {
       case "name_first":
-        newState.name_first = e.target.value;
+        newState.name_first = e.target.value.trim();
+        if (!newState.name_first.length) {
+          hasInvalidInput = false;
+        }
         break;
       case "name_last":
-        newState.name_last = e.target.value;
+        newState.name_last = e.target.value.trim();
+        if (!newState.name_last.length) {
+          hasInvalidInput = false;
+        }
         break;
       case "agility":
       case "speed":
       case "strength":
-        if (this.validateNumber(e.target.value)) {
-          newState[e.target.id] = parseInt(e.target.value);
+        newState[e.target.id] = parseInt(e.target.value) || null;
+        if (this.validateNumber(parseInt(newState[e.target.id]), e.target.id)) {
           if (e.target.classList.contains("invalid")) {
+            this.props.clearError();
+            hasInvalidInput = false;
             e.target.classList.remove("invalid");
           }
         } else {
-          hasInvalid = true;
+          this.props.over100();
           this.invalidInput = e.target;
           this.invalidInput.classList.add("invalid");
         }
@@ -58,12 +80,26 @@ class Roster extends Component {
     if (e.target.type === "checkbox") {
       newState.type = e.target.value;
     }
-    this.setState({ ...this.state, name: newState, hasInvalid });
+    this.setState({
+      ...this.state,
+      name: { ...newState },
+      hasInvalidInput: hasInvalidInput
+    });
   };
 
-  handleSave = () => {
-    if (this.state.hasInvalid) return false;
-    this.props.saveName(this.state);
+  handleBlur = e => {
+    let foundInvalid = Object.keys(this.state.name).find(item => {
+      return !this.state.name[item];
+    });
+
+    this.setState({ verifiedAllInputs: foundInvalid ? false : true });
+  };
+
+  handleSave = e => {
+    e.preventDefault();
+    if (!this.state.verifiedAllInputs) return false;
+    this.props.saveName(this.state.name);
+    this.form.reset();
   };
 
   render() {
@@ -104,60 +140,77 @@ class Roster extends Component {
     return (
       <div className={"wrapper-roster"}>
         <div className="area-input container">
-          <div className="form-group needs-validation" noValidate>
-            {inputList.map((item, i) => {
-              return (
-                <div className={"input-row " + item.id} key={i}>
-                  <label htmlFor={item.id} className="label-input">
-                    {item.label}
-                  </label>
-                  {item.type !== "checkbox" && (
-                    <input
-                      min={item.type === "number" ? "0" : null}
-                      max={item.type === "number" ? "100" : null}
-                      key={item.id + "-" + i}
-                      id={item.id}
-                      type={item.type}
-                      placeholder={"enter " + item.placeholder}
-                      onChange={this.handleChange}
-                      required={true}
-                      className="form-control"
-                    />
-                  )}
-                  {item.type === "checkbox" && (
-                    <div className="input-checkbox">
-                      {item.options.map((check, i) => {
-                        return (
-                          <div className="form-check form-check-inline" key={i}>
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              id={check}
-                              value={check}
-                              onChange={this.handleChange}
-                              checked={this.state.type === check}
-                            />
-                            <label className="form-check-label" htmlFor={check}>
-                              {item.options[i]}
-                            </label>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-          <input
-            type="button"
-            className={
-              "btn btn-primary" + (this.state.hasInvalid ? " disabled" : "")
-            }
-            onClick={this.handleSave}
-            value="Submit"
-          />
+          <form className="form" ref={node => (this.form = node)}>
+            <div className="form-group needs-validation" noValidate>
+              {inputList.map((item, i) => {
+                return (
+                  <div className={"input-row " + item.id} key={i}>
+                    <label htmlFor={item.id} className="label-input">
+                      {item.label}
+                    </label>
+                    {item.type !== "checkbox" && (
+                      <input
+                        min={item.type === "number" ? "0" : null}
+                        max={item.type === "number" ? "100" : null}
+                        id={item.id}
+                        type={item.type}
+                        placeholder={"enter " + item.placeholder}
+                        onBlur={this.handleBlur}
+                        onChange={this.handleChange}
+                        className="form-control"
+                      />
+                    )}
+                    {item.type === "checkbox" && (
+                      <div className="input-checkbox">
+                        {item.options.map((check, i) => {
+                          return (
+                            <div
+                              className="form-check form-check-inline"
+                              key={i}
+                            >
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                id={check}
+                                value={check}
+                                onMouseDown={this.handleChange}
+                                onMouseUp={this.handleBlur}
+                                checked={this.state.name.type === check}
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor={check}
+                              >
+                                {item.options[i]}
+                              </label>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <input
+              type="button"
+              className={
+                "btn btn-primary" +
+                (!this.state.verifiedAllInputs ? " disabled" : "")
+              }
+              onClick={e => {
+                this.state.verifiedAllInputs && this.handleSave(e);
+              }}
+              value="Submit"
+            />
+          </form>
         </div>
+        {this.props.hasError && (
+          <div className="container invalid error-message">
+            {this.props.hasError} Please Re-Enter your player information and
+            re-submit.
+          </div>
+        )}
         <ListOfNames />
       </div>
     );
@@ -167,13 +220,15 @@ class Roster extends Component {
 function mapStateToProps(state) {
   return {
     listOfNames: state.general,
-    savedNames: null
+    hasError: state.general.error
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    saveName: name => dispatch(saveName(name))
+    saveName: name => dispatch(saveName(name)),
+    over100: () => dispatch(over100()),
+    clearError: () => dispatch(clearError())
   };
 }
 

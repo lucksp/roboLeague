@@ -1,19 +1,11 @@
 // here we respond to a dispatch from an action item, then we return updated state to UI
 import ActionTypes from "../actions/actionTypes";
+import { randomLetter, random3, insertItem } from "../../helpers";
 
-const initialState = {};
-
-const insertItem = (origArray, addItem) => {
-  let newArray = origArray.slice();
-  newArray.splice(origArray.length, 0, addItem);
-  return newArray;
+const initialState = {
+  names: [],
+  error: ""
 };
-
-// const removeItem = (array, action) => {
-//   let newArray = array.slice();
-//   newArray.splice(action.index, 1);
-//   return newArray;
-// };
 
 export default function data(state = state ? state : initialState, action) {
   switch (action.type) {
@@ -21,20 +13,6 @@ export default function data(state = state ? state : initialState, action) {
       let newState = [...state];
 
       const name = action.payload;
-      const random3 = () =>
-        Math.random()
-          .toString(4)
-          .slice(-3);
-
-      const randomLetter = function() {
-        const charSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        let randomString = "";
-        for (var i = 0; i < 3; i++) {
-          var randomNum = Math.floor(Math.random() * charSet.length);
-          randomString += charSet.substring(randomNum, randomNum + 1);
-        }
-        return randomString;
-      };
 
       let savedName = {
         ...name,
@@ -44,7 +22,21 @@ export default function data(state = state ? state : initialState, action) {
 
       newState = insertItem(newState, savedName);
 
-      return [...newState];
+      return {
+        ...state,
+        names: newState
+      };
+    case ActionTypes.DUPE_NAME:
+    case ActionTypes.OVER100:
+      return {
+        ...state,
+        error: action.payload
+      };
+    case ActionTypes.CLEAR_ERROR:
+      return {
+        ...state,
+        error: initialState.error
+      };
     default:
       return state;
   }

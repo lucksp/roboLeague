@@ -19,6 +19,15 @@
   display: flex;
 }
 
-input.invalid {
+.invalid {
   border-color: red;
+  color: red;
+}
+
+.error-message {
+  margin-bottom: 40px;
+}
+
+.warning {
+  color: darkorange;
 }

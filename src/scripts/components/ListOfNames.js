@@ -52,8 +52,17 @@ class ListOfNames extends Component {
 }
 
 function mapStateToProps(state) {
+  //     const t = {
+  //   "name_first": "s",
+  //   "name_last": "d",
+  //   "selected": false,
+  //   "speed": 23,
+  //   "strength": 23,
+  //   "agility": 3,
+  //   "type": "starter"
+  // }
   return {
-    listOfNames: state.general
+    listOfNames: state.general.names
   };
 }
 
