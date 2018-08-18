@@ -10,7 +10,7 @@ const initialState = {
 export default function data(state = state ? state : initialState, action) {
   switch (action.type) {
     case ActionTypes.SAVE_NAMES:
-      let newState = [...state];
+      let newState = [...state.names];
 
       const name = action.payload;
 
@@ -28,6 +28,7 @@ export default function data(state = state ? state : initialState, action) {
       };
     case ActionTypes.DUPE_NAME:
     case ActionTypes.OVER100:
+    case ActionTypes.DUPE_SCORE:
       return {
         ...state,
         error: action.payload

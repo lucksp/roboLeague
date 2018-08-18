@@ -15,7 +15,7 @@ class ListOfNames extends Component {
     }
     return this.props.listOfNames.map((name, i) => {
       return (
-        <div className="card name-card" key={i}>
+        <div className="card name-card" key={name.uniqueID}>
           <div className="card-body">
             <h5 className="card-title">
               {name.name_first + " " + name.name_last}

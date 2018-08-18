@@ -99,7 +99,9 @@ class Roster extends Component {
     e.preventDefault();
     if (!this.state.verifiedAllInputs) return false;
     this.props.saveName(this.state.name);
-    this.form.reset();
+    if (!this.props.hasError) {
+      this.form.reset();
+    }
   };
 
   render() {

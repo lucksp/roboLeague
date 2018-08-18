@@ -14,10 +14,17 @@ import { hasDuplicate } from "../reducers/helper";
 export function saveName(name) {
   return function(dispatch, state) {
     const thisState = state().general.names;
-    if (hasDuplicate(thisState, name)) {
+    if (hasDuplicate(thisState, name, "name")) {
       return dispatch({
         type: ActionTypes.DUPE_NAME,
         payload: "You have already entered this player name."
+      });
+    }
+    if (hasDuplicate(thisState, name, "score")) {
+      return dispatch({
+        type: ActionTypes.DUPE_SCORE,
+        payload:
+          "This Player has the same total attribute score as another player on your roster."
       });
     }
     return dispatch({
