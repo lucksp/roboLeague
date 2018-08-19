@@ -1,3 +1,12 @@
+import ActionTypes from "../actions/actionTypes";
+
+export const FLAGS = {
+  NAME: "NAME",
+  SCORE: "SCORE",
+  STARTER: "STARTER",
+  SUB: "SUB"
+};
+
 export const hasDuplicate = (state, newName, flag) => {
   //
   if (!state.length) return false;
@@ -22,6 +31,55 @@ export const hasDuplicate = (state, newName, flag) => {
     });
   };
 
-  if (flag === "name") return compareName(state, newName);
-  if (flag === "score") return compareScore(state, newName);
+  if (flag === FLAGS.NAME) return compareName(state, newName);
+  if (flag === FLAGS.SCORE) return compareScore(state, newName);
+};
+
+export const overLimits = (state, name) => {
+  let countStarter = 0;
+  let countSub = 0;
+  let combinedLimit = 7; //TODO - set to 15
+  let limit;
+
+  if (state.length >= combinedLimit) {
+    return {
+      type: ActionTypes.ROSTER_LIMIT,
+      payload: "You may not select more than 15 combined players."
+    };
+  }
+
+  if (name.type === FLAGS.STARTER.toLowerCase()) {
+    // add new name to counter
+    countStarter++;
+
+    //now check for limit
+    limit = 5; //TODO - set to 10
+    state.forEach(starter => {
+      if (starter.type === FLAGS.STARTER.toLowerCase()) countStarter++;
+    });
+
+    if (countStarter > limit) {
+      return {
+        type: ActionTypes.OVER_STARTERS,
+        payload: "You may not select more than 10 starters."
+      };
+    }
+  } else if (name.type === FLAGS.SUB.toLowerCase()) {
+    // add new name to counter
+    countSub++;
+
+    //now check for limit
+    limit = 2; //TODO - set to 5
+    state.forEach(starter => {
+      countSub++;
+    });
+    if (countSub > limit) {
+      return {
+        type: ActionTypes.OVER_SUBS,
+        payload: "You may not select more than 5 subs."
+      };
+    }
+  }
+
+  return false;
 };

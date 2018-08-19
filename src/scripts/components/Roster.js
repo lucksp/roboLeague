@@ -97,6 +97,7 @@ class Roster extends Component {
 
   handleSave = e => {
     e.preventDefault();
+    this.props.clearError();
     if (!this.state.verifiedAllInputs) return false;
     this.props.saveName(this.state.name);
     if (!this.props.hasError) {
