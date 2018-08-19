@@ -1,11 +1,10 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { Component } from "react";
 
-const Home = () => {
+export const Home = () => {
   return (
     <div>
-      <h1>Hello World</h1>
-      <Link to="/link">Test Link</Link>
+      <h1>Welcome to Your Roster</h1>
+      <p>Select your roster of 10 players & 5 substitutes</p>
     </div>
   );
 };
