@@ -53,7 +53,7 @@ export const overLimits = (state, name) => {
     countStarter++;
 
     //now check for limit
-    limit = 5; //TODO - set to 10
+    limit = 10;
     state.forEach(starter => {
       if (starter.type === FLAGS.STARTER.toLowerCase()) countStarter++;
     });
@@ -69,7 +69,7 @@ export const overLimits = (state, name) => {
     countSub++;
 
     //now check for limit
-    limit = 2; //TODO - set to 5
+    limit = 5;
     state.forEach(starter => {
       countSub++;
     });
