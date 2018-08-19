@@ -19,8 +19,8 @@ export const insertItem = (origArray, addItem) => {
   return newArray;
 };
 
-// export const removeItem = (array, action) => {
-//   let newArray = array.slice();
-//   newArray.splice(action.index, 1);
-//   return newArray;
-// };
+export const removeItem = (origArray, removeItem) => {
+  let newArray = origArray.slice();
+  newArray.splice(removeItem, 1);
+  return newArray;
+};

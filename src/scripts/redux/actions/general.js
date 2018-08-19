@@ -33,7 +33,7 @@ export function saveName(name) {
 }
 
 export function over100() {
-  return function(dispatch, state) {
+  return function(dispatch) {
     return dispatch({
       type: ActionTypes.OVER100,
       payload: "This Player has a score greater than 100."
@@ -42,9 +42,18 @@ export function over100() {
 }
 
 export function clearError() {
-  return function(dispatch, state) {
+  return function(dispatch) {
     return dispatch({
       type: ActionTypes.CLEAR_ERROR
+    });
+  };
+}
+
+export function editName(newName, userId) {
+  return function(dispatch, state) {
+    dispatch({
+      type: ActionTypes.EDIT_NAME,
+      payload: { newName, userId, callback: saveName }
     });
   };
 }

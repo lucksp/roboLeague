@@ -24,8 +24,17 @@
   color: red;
 }
 
-.error-message {
-  margin-bottom: 40px;
+.form-footer {
+  display: flex;
+  align-items: center;
+}
+
+input.button-submit {
+  width: 100px;
+}
+
+.form-check-input {
+  cursor: pointer;
 }
 
 .warning {
@@ -34,4 +43,50 @@
 
 table {
   width: 100%;
+}
+
+tbody {
+  border: 1px solid #efefef;
+}
+
+tr {
+  text-align: center;
+}
+
+.table-header,
+td {
+  text-transform: capitalize;
+}
+
+.table-row {
+  height: 32px;
+}
+
+.table-row.even {
+  background: #efefef;
+}
+
+.table-row.even td {
+  border-right: 1px solid #fff;
+}
+
+.table-row.odd td {
+  border-right: 1px solid #efefef;
+}
+
+.last-col {
+  border-right: none;
+}
+
+td.name {
+  cursor: pointer;
+}
+
+.form-edit {
+  margin-left: 8px;
+  opacity: 0.5;
+  cursor: pointer;
+}
+.form-edit:hover {
+  opacity: 1;
 }

@@ -8,15 +8,19 @@ import {
   clearError
 } from "../redux/actions/general";
 
+const initialNameState = {
+  name_first: null,
+  name_last: null,
+  speed: null,
+  strength: null,
+  agility: null,
+  type: null
+};
+
 class Roster extends Component {
   state = {
     name: {
-      name_first: null,
-      name_last: null,
-      speed: null,
-      strength: null,
-      agility: null,
-      type: null
+      ...initialNameState
     },
     hasInvalidInput: true,
     verifiedAllInputs: false
@@ -88,6 +92,7 @@ class Roster extends Component {
   };
 
   handleBlur = e => {
+    // FIXME - form autofill does not create "onChange" event so state is not updated;
     let foundInvalid = Object.keys(this.state.name).find(item => {
       return !this.state.name[item];
     });
@@ -102,6 +107,7 @@ class Roster extends Component {
     this.props.saveName(this.state.name);
     if (!this.props.hasError) {
       this.form.reset();
+      this.setState({ name: initialNameState });
     }
   };
 
@@ -195,25 +201,27 @@ class Roster extends Component {
                 );
               })}
             </div>
-            <input
-              type="button"
-              className={
-                "btn btn-primary" +
-                (!this.state.verifiedAllInputs ? " disabled" : "")
-              }
-              onClick={e => {
-                this.state.verifiedAllInputs && this.handleSave(e);
-              }}
-              value="Submit"
-            />
+            <div className="form-footer">
+              <input
+                type="button"
+                className={
+                  "btn btn-primary button-submit" +
+                  (!this.state.verifiedAllInputs ? " disabled" : "")
+                }
+                onClick={e => {
+                  this.state.verifiedAllInputs && this.handleSave(e);
+                }}
+                value="Submit"
+              />
+              {this.props.hasError && (
+                <div className="container invalid error-message">
+                  {this.props.hasError} Please Re-Enter your player information
+                  and re-submit.
+                </div>
+              )}
+            </div>
           </form>
         </div>
-        {this.props.hasError && (
-          <div className="container invalid error-message">
-            {this.props.hasError} Please Re-Enter your player information and
-            re-submit.
-          </div>
-        )}
         <ListOfNames />
       </div>
     );

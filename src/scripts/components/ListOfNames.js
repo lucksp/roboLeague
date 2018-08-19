@@ -1,14 +1,34 @@
 import React, { Component } from "react";
 
 import { connect } from "react-redux";
-import { userInfo } from "os";
-// import { getListOfNames, saveName } from "../redux/actions/general";
+import { editName } from "../redux/actions/general";
 
 class ListOfNames extends Component {
-  state = {};
+  state = { editingName: false };
+
+  // TODO
   // componentDidMount() {
   // sort list of names
   // }
+
+  handleClick = (e, stateName) => {
+    e.preventDefault();
+
+    switch (stateName) {
+      case "cancel":
+        // nothing to do;
+        break;
+      case "save":
+        const userId = e.target.dataset.userid;
+        this.props.editName(e.target.value, userId);
+        break;
+    }
+    this.toggleState("editingName");
+  };
+
+  toggleState = stateName => {
+    this.setState({ [stateName]: !this.state[stateName] });
+  };
 
   listTitle() {
     const tableTitles = [
@@ -20,20 +40,64 @@ class ListOfNames extends Component {
       "type"
     ];
     return tableTitles.map((title, i) => {
-      return <th key={i}>{title}</th>;
+      return (
+        <th className="table-header" key={i}>
+          {title}
+        </th>
+      );
     });
   }
 
   listData() {
     return this.props.listOfNames.map((name, i) => {
       return (
-        <tr key={name.uniqueID} id={"player-row-" + name.uniqueID}>
-          <td>{name.name}</td>
-          <td>{name.agility}</td>
-          <td>{name.speed}</td>
-          <td>{name.strength}</td>
-          <td>{name.total}</td>
-          <td>{name.type}</td>
+        <tr
+          key={name.uniqueID}
+          id={"player-row-" + name.uniqueID}
+          className={"table-row" + (i % 2 === 0 ? " even" : " odd")}
+        >
+          {this.state.editingName ? (
+            <td className="name-edit">
+              <input
+                type="text"
+                placeholder="New name"
+                data-userid={name.uniqueID}
+                onKeyUp={e => {
+                  if (e.key === "Enter") {
+                    this.handleClick(e, "save");
+                  }
+                }}
+              />
+              <span
+                className="form-edit"
+                onClick={e => {
+                  this.handleClick(e, "cancel");
+                }}
+              >
+                <i className="fas fa-times" />
+              </span>
+              <span
+                className="form-edit"
+                onClick={e => {
+                  this.handleClick(e, "save");
+                }}
+              >
+                <i className="fas fa-check" />
+              </span>
+            </td>
+          ) : (
+            <td className="name" onClick={this.handleClick}>
+              {name.name}
+              <span className="form-edit">
+                <i className="far fa-edit" />
+              </span>
+            </td>
+          )}
+          <td className="agility">{name.agility}</td>
+          <td className="speed">{name.speed}</td>
+          <td className="strength">{name.strength}</td>
+          <td className="total">{name.total}</td>
+          <td className="type last-col">{name.type}</td>
         </tr>
       );
     });
@@ -67,25 +131,18 @@ class ListOfNames extends Component {
 }
 
 function mapStateToProps(state) {
-  //     const t = {
-  //   "name_first": "s",
-  //   "name_last": "d",
-  //   "selected": false,
-  //   "speed": 23,
-  //   "strength": 23,
-  //   "agility": 3,
-  //   "type": "starter"
-  // }
   return {
     listOfNames: state.general.names
   };
 }
 
-// function mapDispatchToProps(dispatch) {
-//   return {
-//     getListOfNames: () => dispatch(getListOfNames()),
-//     saveName: name => dispatch(saveName(name))
-//   };
-// }
+function mapDispatchToProps(dispatch) {
+  return {
+    editName: (newName, userId) => dispatch(editName(newName, userId))
+  };
+}
 
-export default connect(mapStateToProps)(ListOfNames);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ListOfNames);
